@@ -1,0 +1,73 @@
+@use "variables" as *;
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+/* Глобальные стили */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: $font-family-base;
+  color: $color-text-light;
+  background-color: $color-background;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Глобальные настройки для материалов */
+button {
+  font-family: $font-family-base;
+  border: none;
+  background-color: $color-primary;
+  color: $color-text-light;
+  cursor: pointer;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-sm;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: $color-primary-hover;
+  }
+}
+
+input,
+textarea {
+  font-family: $font-family-base;
+  padding: $spacing-sm;
+  border-radius: $radius-sm;
+  border: 1px solid $color-border;
+  background-color: $color-background;
+  color: $color-text-light;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+  }
+}
+
+/* Заголовки */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  color: $color-text-light;
+}
+
+/* Тема для элементов с Material UI */
+.material-button {
+  background-color: $color-primary;
+  color: $color-text-light;
+  border-radius: $radius-sm;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: $color-primary-hover;
+  }
+}
