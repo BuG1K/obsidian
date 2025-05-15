@@ -27,7 +27,7 @@ const AppPage = () => (
     />
 
     <div style={{
-      display: "flex", flexWrap: "wrap", padding: 20, fontFamily: "'Roboto', sans-serif",
+      display: "flex", flexWrap: "wrap", padding: "20px 20px 77px 20px", fontFamily: "'Roboto', sans-serif",
     }}
     >
       {data.map(({ id, name, players }) => (
