@@ -22,7 +22,7 @@ const AppPage = () => (
       title="Bracket"
       src="https://brackethq.com/b/qzznc/embed/?zoom=0"
       width="100%"
-      height="600"
+      height="550"
       frameBorder="0"
     />
 
