@@ -9,7 +9,7 @@ const bot = new TelegramBot(token, { polling: false }); // polling выключ�
 export async function POST(request: Request) {
   const body = await request.json();
   const { message } = body;
-
+  console.log("Received message:", body);
   if (message?.text) {
     const chatId = message.chat.id;
     await bot.sendMessage(chatId, `Ты написал: ${message.text}`);
