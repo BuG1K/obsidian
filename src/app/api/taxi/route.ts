@@ -1,6 +1,9 @@
 import TelegramBot from "node-telegram-bot-api";
 
 const token = process.env.TELEGRAM_TOKEN;
+if (!token) {
+  throw new Error("TELEGRAM_TOKEN environment variable is not set");
+}
 const bot = new TelegramBot(token, { polling: false }); // polling выключен
 
 export async function POST(request: Request) {
