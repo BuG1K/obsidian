@@ -9,7 +9,7 @@
 /build
 
 # env files (can opt-in for committing if needed)
-.env*
+.env
 
 # typescript
 next-env.d.ts
