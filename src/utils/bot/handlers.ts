@@ -1,6 +1,5 @@
 // bot/handlers.js
 import TelegramBot from "node-telegram-bot-api";
-import User from "@/database/User";
 import { mainMenu, shareContactKeyboard, homeOnly } from "./keyboards";
 import { getUser, setUser } from "./store";
 
@@ -157,9 +156,6 @@ export async function handleContact(bot: TelegramBot, msg: TelegramBot.Message) 
     return;
   }
 
-  await User.create({
-    name, phone, telegram, points: "0",
-  });
   setUser(chatId, { phone, step: null });
 
   await bot.sendMessage(
