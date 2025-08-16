@@ -1,8 +1,8 @@
 // bot/handlers.js
 import TelegramBot from "node-telegram-bot-api";
+import User from "@/database/User";
 import { mainMenu, shareContactKeyboard, homeOnly } from "./keyboards";
 import { getUser, setUser } from "./store";
-// import User from "@/database/User";
 
 const CONTACTS_STATIC = {
   phone: "89086660990",
@@ -149,7 +149,8 @@ export async function handleText(bot: TelegramBot, msg: TelegramBot.Message) {
 export async function handleContact(bot: TelegramBot, msg: TelegramBot.Message) {
   const chatId = msg.chat.id;
   const phone = msg.contact?.phone_number || null;
-  console.log(msg);
+  const name = msg.from?.first_name || "Пользователь";
+
   if (!phone) {
     await bot.sendMessage(chatId, "Контакт не распознан. Попробуйте ещё раз.", {
       reply_markup: shareContactKeyboard,
@@ -157,12 +158,16 @@ export async function handleContact(bot: TelegramBot, msg: TelegramBot.Message) 
     return;
   }
 
-  // User.create({
-  //   name: msg.contact.first_name || "Unknown",
-  //   phone,
-  //   chatId,
-  // });
-  setUser(chatId, { phone, step: null });
+  const user = await User.create({
+    name,
+    phone,
+    chatId,
+  });
+
+  if (!user) {
+    await bot.sendMessage(chatId, "Ошибка регистрации. Попробуйте позже.");
+    return;
+  }
 
   await bot.sendMessage(
     chatId,
