@@ -10,10 +10,6 @@ const CONTACTS_STATIC = {
   address: "-",
 };
 
-const PRICE_STATIC = {
-  час: "1000",
-};
-
 async function sendHome(bot: TelegramBot, chatId: number) {
   await bot.sendMessage(
     chatId,
