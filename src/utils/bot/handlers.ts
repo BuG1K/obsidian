@@ -1,5 +1,6 @@
 // bot/handlers.js
 import TelegramBot from "node-telegram-bot-api";
+import User from "@/database/User";
 import { mainMenu, shareContactKeyboard, homeOnly } from "./keyboards";
 import { getUser, setUser } from "./store";
 
@@ -7,6 +8,10 @@ const CONTACTS_STATIC = {
   phone: "89086660990",
   vk: "-",
   address: "-",
+};
+
+const PRICE_STATIC = {
+  час: "1000",
 };
 
 async function sendHome(bot: TelegramBot, chatId: number) {
@@ -25,6 +30,14 @@ async function sendProfile(bot: TelegramBot, chatId: number) {
   await bot.sendMessage(
     chatId,
     `👤 Профиль\nНикнейм: ${nickname}\nБонусы: ${bonus}`,
+    { reply_markup: mainMenu },
+  );
+}
+
+async function sendPrice(bot: TelegramBot, chatId: number) {
+  await bot.sendMessage(
+    chatId,
+    "sdfsfddf",
     { reply_markup: mainMenu },
   );
 }
@@ -81,6 +94,11 @@ export async function handleText(bot: TelegramBot, msg: TelegramBot.Message) {
     return;
   }
 
+  if (text === "💵 Цены") {
+    await sendPrice(bot, chatId);
+    return;
+  }
+
   if (text === "💬 Отзывы") {
     setUser(chatId, { step: "await_review" });
     await bot.sendMessage(chatId, "Оставьте отзыв:", { reply_markup: homeOnly });
@@ -90,6 +108,7 @@ export async function handleText(bot: TelegramBot, msg: TelegramBot.Message) {
   if (text === "🎁 Акции") {
     setUser(chatId, { step: "await_promo" });
     await bot.sendMessage(chatId, "Введите промокод:", { reply_markup: homeOnly });
+
     return;
   }
 
@@ -105,13 +124,25 @@ export async function handleText(bot: TelegramBot, msg: TelegramBot.Message) {
   }
 
   if (user.step === "await_promo") {
-    // тут можно валидировать промо, начислять бонусы и т.д.
-    setUser(chatId, { lastPromo: text, step: null });
-    await bot.sendMessage(
-      chatId,
-      "Промокод принят! 🎉",
-      { reply_markup: mainMenu },
-    );
+  // Пример списка валидных промокодов
+    const validPromos = ["PROMO2024", "HELLO", "BONUS100"];
+
+    if (validPromos.includes(text.toUpperCase())) {
+      setUser(chatId, { lastPromo: text, step: null });
+      await bot.sendMessage(
+        chatId,
+        "Промокод принят! 🎉",
+        { reply_markup: mainMenu },
+      );
+    // Здесь можно начислить бонусы
+    } else {
+      await bot.sendMessage(
+        chatId,
+        "Промокод не найден или недействителен. Попробуйте ещё раз:",
+        { reply_markup: homeOnly },
+      );
+    // step не меняем — пользователь может попробовать снова
+    }
     return;
   }
 
@@ -130,6 +161,9 @@ export async function handleContact(bot: TelegramBot, msg: TelegramBot.Message) 
     return;
   }
 
+  await User.create({
+    name, phone, telegram, points: "0",
+  });
   setUser(chatId, { phone, step: null });
 
   await bot.sendMessage(
