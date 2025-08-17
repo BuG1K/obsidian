@@ -1,18 +1,23 @@
-import { MongoClient, ServerApiVersion } from "mongodb";
+// lib/mongodb.js
+import mongoose from "mongoose";
 
-const uri = process.env.MONGODB_URI!;
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
+let isConnected = false;
 
-const connectDB = async (collection: string) => {
-  // В v5+ connect() можно вызывать много раз, он сам следит за состоянием
-  await client.connect();
-  return client.db().collection(collection);
-};
+export default async function connectDB() {
+  if (isConnected) return;
 
-export default connectDB;
+  if (!process.env.MONGODB_URI) {
+    throw new Error("Please add MONGODB_URI to your environment variables");
+  }
+
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      dbName: "mydb",
+    });
+    isConnected = true;
+    console.log("MongoDB connected");
+  } catch (err) {
+    console.error("MongoDB connection error", err);
+    throw err;
+  }
+}

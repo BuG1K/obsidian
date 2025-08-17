@@ -159,7 +159,7 @@ export async function handleContact(bot: TelegramBot, msg: TelegramBot.Message) 
     return;
   }
 
-  await connectDB("obsidian");
+  await connectDB();
   const user = await User.create({
     name,
     phone,
