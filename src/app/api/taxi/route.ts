@@ -28,7 +28,7 @@ const GET = async (request: NextRequest) => {
   }
 
   // eslint-disable-next-line no-underscore-dangle
-  const order = await TaxiOrder.create({ userId: user._id, orderId, code: "123234" });
+  const order = await TaxiOrder.create({ userId: user._id, orderId, code: orderId });
 
   if (!order) {
     return new Response(JSON.stringify({
