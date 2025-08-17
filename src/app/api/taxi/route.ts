@@ -73,43 +73,39 @@ const POST = async (request: NextRequest) => {
       }
 
       if (msg.contact) {
-        const phone = msg.contact?.phone_number || null;
+        const phone = msg.contact.phone_number;
         const name = msg.from?.first_name || "Пользователь";
-
-        if (!phone) {
-          await bot.sendMessage(
-            chatId,
-            "Для регистрации нажмите /start или поделитесь контактом ещё раз.",
-          );
-
-          return new Response("ok", { status: 200 });
-        }
 
         await connectDB();
 
-        // Ищем пользователя по номеру телефона
         let user = await TaxiUser.findOne({ phone });
-
         if (!user) {
-          // Создаём нового пользователя
           user = await TaxiUser.create({ name, phone, chatId });
-
-          // Валидация: проверяем, что пользователь реально создался
           if (!user) {
             await bot.sendMessage(chatId, "Ошибка регистрации. Попробуйте позже.");
             return new Response("ok", { status: 500 });
           }
         }
 
+        // Сначала убираем клавиатуру с контактом
+        await bot.sendMessage(chatId, "Регистрация завершена ✅", {
+          reply_markup: {
+            remove_keyboard: true,
+          },
+        });
+
+        // Небольшая пауза, чтобы Telegram успел убрать клавиатуру
+        await new Promise<void>((resolve) => { setTimeout(resolve, 300); });
+
+        // Потом отправляем сообщение с inline-кнопками
         await bot.sendMessage(
           chatId,
           `Привет, ${name}! Вы успешно зарегистрированы и участвуете в акции 🎉\n\n`
-    + "🌐 Наш сайт: https://taxi-novoe.ru/\n"
-    + "📞 Основной номер: 65-67-11\n"
-    + "📱 Мегафон: 8 (3952) 65-67-11",
+      + "🌐 Наш сайт: https://taxi-novoe.ru/\n"
+      + "📞 Основной номер: 65-67-11\n"
+      + "📱 Мегафон: 8 (3952) 65-67-11",
           {
             reply_markup: {
-              remove_keyboard: true, // убираем старую клавиатуру
               inline_keyboard: [
                 [
                   { text: "🌐 Перейти на сайт", url: "https://taxi-novoe.ru/" },
