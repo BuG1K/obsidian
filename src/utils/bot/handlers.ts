@@ -166,6 +166,9 @@ export async function handleContact(bot: TelegramBot, msg: TelegramBot.Message) 
     chatId,
   });
 
+  // eslint-disable-next-line no-console
+  console.log("New user registered:", user);
+
   if (!user) {
     await bot.sendMessage(chatId, "Ошибка регистрации. Попробуйте позже.");
     return;
