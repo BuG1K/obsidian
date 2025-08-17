@@ -65,7 +65,6 @@ const POST = async (request: NextRequest) => {
           reply_markup: {
             keyboard: [[{ text: "📲 Поделиться контактом", request_contact: true }]],
             resize_keyboard: true,
-            one_time_keyboard: true,
           },
         });
 
@@ -73,37 +72,41 @@ const POST = async (request: NextRequest) => {
       }
 
       if (msg.contact) {
-        const phone = msg.contact.phone_number;
+        const phone = msg.contact?.phone_number || null;
         const name = msg.from?.first_name || "Пользователь";
 
-        await connectDB();
+        if (!phone) {
+          await bot.sendMessage(
+            chatId,
+            "Для регистрации нажмите /start или поделитесь контактом ещё раз.",
+          );
 
-        let user = await TaxiUser.findOne({ phone });
-        if (!user) {
-          user = await TaxiUser.create({ name, phone, chatId });
-          if (!user) {
-            await bot.sendMessage(chatId, "Ошибка регистрации. Попробуйте позже.");
-            return new Response("ok", { status: 500 });
-          }
+          return new Response("ok", { status: 200 });
         }
 
-        // Сначала убираем клавиатуру с контактом
-        await bot.sendMessage(chatId, "Регистрация завершена ✅", {
-          reply_markup: {
-            remove_keyboard: true,
-          },
-        });
+        await connectDB();
+        let user = await TaxiUser.findOne({ phone });
 
-        // Небольшая пауза, чтобы Telegram успел убрать клавиатуру
-        await new Promise<void>((resolve) => { setTimeout(resolve, 300); });
+        if (!user) {
+          user = await TaxiUser.create({
+            name,
+            phone,
+            chatId,
+          });
+        }
 
-        // Потом отправляем сообщение с inline-кнопками
+        if (!user) {
+          await bot.sendMessage(chatId, "Ошибка регистрации. Попробуйте позже.");
+
+          return new Response("ok", { status: 200 });
+        }
+
         await bot.sendMessage(
           chatId,
           `Привет, ${name}! Вы успешно зарегистрированы и участвуете в акции 🎉\n\n`
-      + "🌐 Наш сайт: https://taxi-novoe.ru/\n"
-      + "📞 Основной номер: 65-67-11\n"
-      + "📱 Мегафон: 8 (3952) 65-67-11",
+            + "🌐 Наш сайт: https://taxi-novoe.ru/\n"
+            + "📞 Основной номер: 65-67-11\n"
+            + "📱 Мегафон: 8 (3952) 65-67-11",
           {
             reply_markup: {
               inline_keyboard: [
