@@ -16,7 +16,7 @@ const GET = async (request: NextRequest) => {
   if (callType === "operator") {
     return new Response(JSON.stringify({
       error: "call_type is operator",
-    }), { status: 404 });
+    }), { status: 500 });
   }
 
   if (!phone) {
@@ -128,6 +128,16 @@ const POST = async (request: NextRequest) => {
         await bot.sendMessage(
           chatId,
           "Спасибо за сообщение! 🚖 Напоминаем: за каждую поездку мы дарим код для розыгрыша!",
+          {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  { text: "🌐 Перейти на сайт", url: "https://taxi-novoe.ru/" },
+                  { text: "📞 Позвонить", url: "tel:+73952657111" },
+                ],
+              ],
+            },
+          },
         );
       }
     }
