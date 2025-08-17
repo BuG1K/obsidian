@@ -11,6 +11,13 @@ const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: false });
 const GET = async (request: NextRequest) => {
   const phone = request.nextUrl.searchParams.get("phone") as string;
   const orderId = request.nextUrl.searchParams.get("order_id") as string;
+  const callType = request.nextUrl.searchParams.get("call_type") as string;
+
+  if (callType === "operator") {
+    return new Response(JSON.stringify({
+      error: "call_type is operator",
+    }), { status: 404 });
+  }
 
   if (!phone) {
     return new Response(JSON.stringify({
