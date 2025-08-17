@@ -20,6 +20,7 @@ const GET = async (request: NextRequest) => {
 
   await connectDB();
   const validPhone = `7${phone.slice(1)}`;
+
   const user = await TaxiUser.findOne({ phone: validPhone });
 
   if (!user) {
@@ -85,34 +86,15 @@ const POST = async (request: NextRequest) => {
         }
 
         await connectDB();
-
         let user = await TaxiUser.findOne({ phone });
 
         if (user) {
-          await bot.sendMessage(
+          user = await TaxiUser.create({
+            name,
+            phone,
             chatId,
-            `Привет, ${name}! Вы успешно зарегистрированы и участвуете в акции 🎉\n\n`
-              + "🌐 Наш сайт: https://taxi-novoe.ru/\n"
-              + "📞 Основной номер: 65-67-11\n"
-              + "📱 Мегафон: 8 (3952) 65-67-11",
-            {
-              reply_markup: {
-                inline_keyboard: [
-                  [
-                    { text: "🌐 Перейти на сайт", url: "https://taxi-novoe.ru/" },
-                    { text: "📞 Позвонить", url: "tel:+73952657111" },
-                  ],
-                ],
-              },
-            },
-          );
+          });
         }
-
-        user = await TaxiUser.create({
-          name,
-          phone,
-          chatId,
-        });
 
         if (!user) {
           await bot.sendMessage(chatId, "Ошибка регистрации. Попробуйте позже.");
@@ -120,7 +102,23 @@ const POST = async (request: NextRequest) => {
           return new Response("ok", { status: 200 });
         }
 
-        await bot.sendMessage(chatId, `Привет, ${name}! Вы успешно зарегистрированы и участвуете в акции 🎉`);
+        await bot.sendMessage(
+          chatId,
+          `Привет, ${name}! Вы успешно зарегистрированы и участвуете в акции 🎉\n\n`
+            + "🌐 Наш сайт: https://taxi-novoe.ru/\n"
+            + "📞 Основной номер: 65-67-11\n"
+            + "📱 Мегафон: 8 (3952) 65-67-11",
+          {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  { text: "🌐 Перейти на сайт", url: "https://taxi-novoe.ru/" },
+                  { text: "📞 Позвонить", url: "tel:+73952657111" },
+                ],
+              ],
+            },
+          },
+        );
 
         return new Response("ok", { status: 200 });
       }
