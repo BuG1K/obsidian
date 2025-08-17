@@ -13,10 +13,10 @@ const GET = async (request: NextRequest) => {
   const orderId = request.nextUrl.searchParams.get("order_id") as string;
   const callType = request.nextUrl.searchParams.get("call_type") as string;
 
-  if (callType === "operator") {
+  if (callType === "operator" || !callType) {
     return new Response(JSON.stringify({
-      error: "call_type is operator",
-    }), { status: 500 });
+      error: "call_type error",
+    }), { status: 404 });
   }
 
   if (!phone) {
@@ -133,7 +133,7 @@ const POST = async (request: NextRequest) => {
               inline_keyboard: [
                 [
                   { text: "🌐 Перейти на сайт", url: "https://taxi-novoe.ru/" },
-                  { text: "📞 Позвонить", url: "tel:+73952657111" },
+                  { text: "📞 Позвонить", url: "tel:+73952656711" },
                 ],
               ],
             },
