@@ -88,7 +88,7 @@ const POST = async (request: NextRequest) => {
         await connectDB();
         let user = await TaxiUser.findOne({ phone });
 
-        if (user) {
+        if (!user) {
           user = await TaxiUser.create({
             name,
             phone,
