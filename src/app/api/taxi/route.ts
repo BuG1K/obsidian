@@ -86,20 +86,19 @@ const POST = async (request: NextRequest) => {
         }
 
         await connectDB();
+
+        // Ищем пользователя по номеру телефона
         let user = await TaxiUser.findOne({ phone });
 
         if (!user) {
-          user = await TaxiUser.create({
-            name,
-            phone,
-            chatId,
-          });
-        }
+          // Создаём нового пользователя
+          user = await TaxiUser.create({ name, phone, chatId });
 
-        if (!user) {
-          await bot.sendMessage(chatId, "Ошибка регистрации. Попробуйте позже.");
-
-          return new Response("ok", { status: 200 });
+          // Валидация: проверяем, что пользователь реально создался
+          if (!user) {
+            await bot.sendMessage(chatId, "Ошибка регистрации. Попробуйте позже.");
+            return new Response("ok", { status: 500 });
+          }
         }
 
         await bot.sendMessage(
@@ -116,7 +115,6 @@ const POST = async (request: NextRequest) => {
                   { text: "📞 Позвонить", url: "tel:+73952657111" },
                 ],
               ],
-              remove_keyboard: true,
             },
           },
         );
