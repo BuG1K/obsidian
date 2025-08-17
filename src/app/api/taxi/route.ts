@@ -1,14 +1,14 @@
 // pages/api/telegramWebhook.ts
 import connectDB from "@/database/db";
 import TaxiUser from "@/database/TaxiUser";
-import type { NextApiRequest } from "next";
+import { NextRequest } from "next/server";
 import TelegramBot from "node-telegram-bot-api";
 
 const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN_TAXI || "";
 const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: false });
 
-const GET = async (request: NextApiRequest) => {
-  const phone = request.query.phone as string;
+const GET = async (request: NextRequest) => {
+  const phone = request.nextUrl.searchParams.get("phone") as string;
 
   if (!phone) {
     return new Response(JSON.stringify({
@@ -39,15 +39,15 @@ const GET = async (request: NextApiRequest) => {
   return new Response(JSON.stringify({ ok: true }), { status: 200 });
 };
 
-const POST = async (request: NextApiRequest) => {
+const POST = async (request: NextRequest) => {
   try {
-    const update = request.body;
+    const update = await request.json();
 
     // eslint-disable-next-line no-console
     console.log("Telegram update:", JSON.stringify(update));
 
     const msg = update.message || update.edited_message || null;
-    const chatId = msg.chat.id;
+    const chatId = msg?.chat?.id;
 
     if (msg) {
       // /start
