@@ -20,6 +20,7 @@ const GET = async (request: NextRequest) => {
 
   await connectDB();
   const validPhone = `7${phone.slice(1)}`;
+  console.log("Valid phone:", validPhone);
   const user = await TaxiUser.findOne({ validPhone });
 
   if (!user) {
