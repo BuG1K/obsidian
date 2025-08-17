@@ -85,7 +85,14 @@ const POST = async (request: NextRequest) => {
         }
 
         await connectDB();
-        const user = await TaxiUser.create({
+
+        let user = await TaxiUser.findOne({ phone });
+
+        if (user) {
+          await bot.sendMessage(chatId, `Привет, ${name}! Вы успешно зарегистрированы и участвуете в акции 🎉`);
+        }
+
+        user = await TaxiUser.create({
           name,
           phone,
           chatId,
