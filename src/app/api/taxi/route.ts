@@ -92,15 +92,15 @@ const POST = async (request: NextRequest) => {
           await bot.sendMessage(
             chatId,
             `Привет, ${name}! Вы успешно зарегистрированы и участвуете в акции 🎉\n\n`
-            + "🌐 Наш сайт: https://taxi-novoe.ru/\n"
-            + "📞 Основной номер: 65-67-11\n"
-            + "📱 Мегафон: 8 (3952) 65-67-11",
+              + "🌐 Наш сайт: https://taxi-novoe.ru/\n"
+              + "📞 Основной номер: 65-67-11\n"
+              + "📱 Мегафон: 8 (3952) 65-67-11",
             {
               reply_markup: {
                 inline_keyboard: [
                   [
                     { text: "🌐 Перейти на сайт", url: "https://taxi-novoe.ru/" },
-                    { text: "📞 Позвонить", url: "tel:+73952657111" }, // формат для прямого звонка
+                    { text: "📞 Позвонить", url: "tel:+73952657111" },
                   ],
                 ],
               },
