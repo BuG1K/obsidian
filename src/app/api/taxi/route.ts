@@ -63,33 +63,10 @@ const POST = async (request: NextRequest) => {
       if (msg.text === "/start") {
         await bot.sendMessage(chatId, "Нажмите кнопку ниже, чтобы участвовать в акции 🚖", {
           reply_markup: {
-            keyboard: [
-              [{ text: "📲 Поделиться контактом", request_contact: true }],
-            ],
+            keyboard: [[{ text: "📲 Поделиться контактом", request_contact: true }]],
             resize_keyboard: true,
-            one_time_keyboard: true, // клавиатура исчезнет после нажатия
           },
         });
-
-        // После того как пользователь отправит контакт
-        // (inline-кнопки с сайтом и звонком)
-        await bot.sendMessage(
-          chatId,
-          "Спасибо за регистрацию! 🎉\n\n"
-    + "🌐 Наш сайт: https://taxi-novoe.ru/\n"
-    + "📞 Основной номер: 65-67-11\n"
-    + "📱 Мегафон: 8 (3952) 65-67-11",
-          {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  { text: "🌐 Перейти на сайт", url: "https://taxi-novoe.ru/" },
-                  { text: "📞 Позвонить", url: "tel:+73952657111" },
-                ],
-              ],
-            },
-          },
-        );
 
         return new Response("ok", { status: 200 });
       }
@@ -130,6 +107,11 @@ const POST = async (request: NextRequest) => {
             + "🌐 Наш сайт: https://taxi-novoe.ru/\n"
             + "📞 Основной номер: 65-67-11\n"
             + "📱 Мегафон: 8 (3952) 65-67-11",
+          {
+            reply_markup: {
+              remove_keyboard: true,
+            },
+          },
         );
 
         return new Response("ok", { status: 200 });
