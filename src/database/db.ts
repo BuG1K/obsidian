@@ -1,23 +1,27 @@
-// lib/mongodb.js
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 
-let isConnected = false;
+interface MongooseCache {
+  conn: Mongoose | null;
+  promise: Promise<Mongoose> | null;
+}
 
-export default async function connectDB() {
-  if (isConnected) return;
+// глобальный кэш
+const cached: MongooseCache = global.mongooseCache ?? { conn: null, promise: null };
+global.mongooseCache = cached;
 
-  if (!process.env.MONGODB_URI) {
-    throw new Error("Please add MONGODB_URI to your environment variables");
-  }
+export default async function connectDB(): Promise<Mongoose> {
+  if (cached.conn) return cached.conn;
 
-  try {
-    await mongoose.connect(process.env.MONGODB_URI, {
+  if (!cached.promise) {
+    if (!process.env.MONGODB_URI) {
+      throw new Error("Please define the MONGODB_URI environment variable");
+    }
+
+    cached.promise = mongoose.connect(process.env.MONGODB_URI!, {
       dbName: "mydb",
-    });
-    isConnected = true;
-    console.log("MongoDB connected");
-  } catch (err) {
-    console.error("MongoDB connection error", err);
-    throw err;
+    }).then((m) => m);
   }
+
+  cached.conn = await cached.promise;
+  return cached.conn;
 }
