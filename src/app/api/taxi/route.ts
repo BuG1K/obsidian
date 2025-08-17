@@ -116,6 +116,7 @@ const POST = async (request: NextRequest) => {
                   { text: "📞 Позвонить", url: "tel:+73952657111" },
                 ],
               ],
+              remove_keyboard: true,
             },
           },
         );
