@@ -26,7 +26,7 @@ const GET = async (request: NextRequest) => {
   }
 
   const status = await bot.sendMessage(
-    user.telegramChatId,
+    user.chatId,
     "Спасибо за поездку! 🎉",
   );
 
