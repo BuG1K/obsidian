@@ -52,10 +52,20 @@ const POST = async (request: NextRequest) => {
     if (msg) {
       // /start
       if (msg.text === "/start") {
-        await bot.sendMessage(
-          chatId,
-          "Добро пожаловать! Давай зарегистрируемся.\n\nВведите ваш никнейм:",
-        );
+        await bot.sendMessage(chatId, "Нажмите кнопку ниже, чтобы участвовать в акции 🚖", {
+          reply_markup: {
+            keyboard: [
+              [
+                {
+                  text: "📲 Участвовать в акции",
+                  request_contact: true, // запрос номера телефона
+                },
+              ],
+            ],
+            resize_keyboard: true,
+            one_time_keyboard: true,
+          },
+        });
 
         return new Response("ok", { status: 200 });
       }
