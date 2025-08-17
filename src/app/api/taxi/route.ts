@@ -1,7 +1,7 @@
-// pages/api/telegramWebhook.ts
 import connectDB from "@/database/db";
 import TaxiOrder from "@/database/TaxiOrder";
 import TaxiUser from "@/database/TaxiUser";
+import generateShortCode from "@/utils/generateShortCode";
 import { NextRequest } from "next/server";
 import TelegramBot from "node-telegram-bot-api";
 
@@ -10,7 +10,7 @@ const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: false });
 
 const GET = async (request: NextRequest) => {
   const phone = request.nextUrl.searchParams.get("phone") as string;
-  const orderId = request.nextUrl.searchParams.get("orderId") as string;
+  const orderId = request.nextUrl.searchParams.get("order_id") as string;
 
   if (!phone) {
     return new Response(JSON.stringify({
@@ -19,7 +19,8 @@ const GET = async (request: NextRequest) => {
   }
 
   await connectDB();
-  const user = await TaxiUser.findOne({ phone });
+  const validPhone = `7${phone.slice(1)}`;
+  const user = await TaxiUser.findOne({ validPhone });
 
   if (!user) {
     return new Response(JSON.stringify({
@@ -27,8 +28,9 @@ const GET = async (request: NextRequest) => {
     }), { status: 404 });
   }
 
+  const code = generateShortCode();
   // eslint-disable-next-line no-underscore-dangle
-  const order = await TaxiOrder.create({ userId: user._id, orderId, code: orderId });
+  const order = await TaxiOrder.create({ userId: user._id, orderId, code });
 
   if (!order) {
     return new Response(JSON.stringify({
@@ -38,7 +40,7 @@ const GET = async (request: NextRequest) => {
 
   const status = await bot.sendMessage(
     user.chatId,
-    `Спасибо за поездку! 🎉 Ваш уникальный код для розыгрыша:${orderId}`,
+    `Спасибо за поездку! 🎉 Ваш уникальный код для розыгрыша:${code}`,
   );
 
   if (!status) {
@@ -53,26 +55,14 @@ const GET = async (request: NextRequest) => {
 const POST = async (request: NextRequest) => {
   try {
     const update = await request.json();
-
-    // eslint-disable-next-line no-console
-    console.log("Telegram update:", JSON.stringify(update));
-
     const msg = update.message || update.edited_message || null;
     const chatId = msg?.chat?.id;
 
     if (msg) {
-      // /start
       if (msg.text === "/start") {
         await bot.sendMessage(chatId, "Нажмите кнопку ниже, чтобы участвовать в акции 🚖", {
           reply_markup: {
-            keyboard: [
-              [
-                {
-                  text: "📲 Участвовать в акции",
-                  request_contact: true, // запрос номера телефона
-                },
-              ],
-            ],
+            keyboard: [[{ text: "📲 Поделиться контактом", request_contact: true }]],
             resize_keyboard: true,
             one_time_keyboard: true,
           },
@@ -81,7 +71,6 @@ const POST = async (request: NextRequest) => {
         return new Response("ok", { status: 200 });
       }
 
-      // Контакт (после нажатия кнопки "Поделиться контактом")
       if (msg.contact) {
         const phone = msg.contact?.phone_number || null;
         const name = msg.from?.first_name || "Пользователь";
@@ -120,7 +109,6 @@ const POST = async (request: NextRequest) => {
         return new Response("ok", { status: 200 });
       }
 
-      // Обычный текст/кнопки
       if (typeof msg.text === "string") {
         await bot.sendMessage(
           chatId,
@@ -129,12 +117,11 @@ const POST = async (request: NextRequest) => {
       }
     }
 
-    // Если это не message (например, callback_query и т.п.) — просто ок
     return new Response("ok", { status: 200 });
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error("Webhook error:", e);
-    return new Response("ok", { status: 200 }); // Telegram ждёт 200, даже при логических ошибках
+    return new Response("ok", { status: 200 });
   }
 };
 
