@@ -1,5 +1,6 @@
 // pages/api/telegramWebhook.ts
 import connectDB from "@/database/db";
+import TaxiOrder from "@/database/TaxiOrder";
 import TaxiUser from "@/database/TaxiUser";
 import { NextRequest } from "next/server";
 import TelegramBot from "node-telegram-bot-api";
@@ -9,6 +10,7 @@ const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: false });
 
 const GET = async (request: NextRequest) => {
   const phone = request.nextUrl.searchParams.get("phone") as string;
+  const orderId = request.nextUrl.searchParams.get("orderId") as string;
 
   if (!phone) {
     return new Response(JSON.stringify({
@@ -25,9 +27,18 @@ const GET = async (request: NextRequest) => {
     }), { status: 404 });
   }
 
+  // eslint-disable-next-line no-underscore-dangle
+  const order = await TaxiOrder.create({ userId: user._id, orderId, code: "123234" });
+
+  if (!order) {
+    return new Response(JSON.stringify({
+      error: "Failed to create order",
+    }), { status: 500 });
+  }
+
   const status = await bot.sendMessage(
     user.chatId,
-    "Спасибо за поездку! 🎉",
+    "Спасибо за поездку! 🎉 Ваш уникальный код для розыгрыша: 123234",
   );
 
   if (!status) {
