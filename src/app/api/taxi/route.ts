@@ -43,7 +43,7 @@ const GET = async (request: NextRequest) => {
   if (!order) {
     return new Response(JSON.stringify({
       error: "Failed to create order",
-    }), { status: 500 });
+    }), { status: 404 });
   }
 
   const status = await bot.sendMessage(
@@ -54,7 +54,7 @@ const GET = async (request: NextRequest) => {
   if (!status) {
     return new Response(JSON.stringify({
       error: "Failed to send message",
-    }), { status: 500 });
+    }), { status: 404 });
   }
 
   return new Response(JSON.stringify({ ok: true }), { status: 200 });
@@ -68,12 +68,19 @@ const POST = async (request: NextRequest) => {
 
     if (msg) {
       if (msg.text === "/start") {
-        await bot.sendMessage(chatId, "Нажмите кнопку ниже, чтобы участвовать в акции 🚖", {
-          reply_markup: {
-            keyboard: [[{ text: "📲 Поделиться контактом", request_contact: true }]],
-            resize_keyboard: true,
+        await bot.sendMessage(
+          chatId,
+          "Нажмите кнопку ниже, чтобы участвовать в акции 🚖",
+          {
+            reply_markup: {
+              keyboard: [[{
+                text: "📲 Поделиться контактом",
+                request_contact: true,
+              }]],
+              resize_keyboard: true,
+            },
           },
-        });
+        );
 
         return new Response("ok", { status: 200 });
       }
@@ -111,6 +118,7 @@ const POST = async (request: NextRequest) => {
         await bot.sendMessage(
           chatId,
           `Привет, ${name}! Вы успешно зарегистрированы и участвуете в акции 🎉\n\n`
+            + "Делай заказы и получай уникальные коды для розыгрыша!\n\n"
             + "🌐 Наш сайт: https://taxi-novoe.ru/\n"
             + "📞 Основной номер: 65-67-11\n"
             + "📱 Мегафон: 8 (3952) 65-67-11",
@@ -128,16 +136,6 @@ const POST = async (request: NextRequest) => {
         await bot.sendMessage(
           chatId,
           "Спасибо за сообщение! 🚖 Напоминаем: за каждую поездку мы дарим код для розыгрыша!",
-          {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  { text: "🌐 Перейти на сайт", url: "https://taxi-novoe.ru/" },
-                  { text: "📞 Позвонить", url: "tel:+73952656711" },
-                ],
-              ],
-            },
-          },
         );
       }
     }
