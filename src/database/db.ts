@@ -1,26 +1,18 @@
-import mongoose from "mongoose";
+import { MongoClient, ServerApiVersion } from "mongodb";
 
-let isConnected = false;
-const MONGODB_URI = process.env.MONGODB_URI || "";
-const MONGODB_DB = process.env.MONGODB_DB || "";
+const uri = process.env.MONGODB_URI!;
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
 
-const connectDB = async () => {
-  if (isConnected) return;
-
-  try {
-    await mongoose.connect(MONGODB_URI, {
-      dbName: MONGODB_DB,
-    });
-    isConnected = true;
-
-    // eslint-disable-next-line no-console
-    console.log("✅ MongoDB Atlas connected");
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error("❌ MongoDB connection error:", err);
-
-    throw err;
-  }
+const connectDB = async (collection: string) => {
+  // В v5+ connect() можно вызывать много раз, он сам следит за состоянием
+  await client.connect();
+  return client.db().collection(collection);
 };
 
 export default connectDB;

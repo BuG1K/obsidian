@@ -1,6 +1,7 @@
 // bot/handlers.js
 import TelegramBot from "node-telegram-bot-api";
 import User from "@/database/User";
+import connectDB from "@/database/db";
 import { mainMenu, shareContactKeyboard, homeOnly } from "./keyboards";
 import { getUser, setUser } from "./store";
 
@@ -158,6 +159,7 @@ export async function handleContact(bot: TelegramBot, msg: TelegramBot.Message) 
     return;
   }
 
+  await connectDB("obsidian");
   const user = await User.create({
     name,
     phone,
