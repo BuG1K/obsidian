@@ -101,6 +101,12 @@ const POST = async (request: NextRequest) => {
           }
         }
 
+        await bot.sendMessage(chatId, "Регистрация завершена ✅", {
+          reply_markup: {
+            remove_keyboard: true,
+          },
+        });
+
         await bot.sendMessage(
           chatId,
           `Привет, ${name}! Вы успешно зарегистрированы и участвуете в акции 🎉\n\n`
