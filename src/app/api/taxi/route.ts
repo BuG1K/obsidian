@@ -14,7 +14,7 @@ const GET = async (request: NextRequest) => {
   const callType = request.nextUrl.searchParams.get("call_type") as string;
 
   console.log(callType);
-  if (callType === "operator") {
+  if (callType === '"operator"') {
     return new Response(JSON.stringify({
       error: "call_type error",
     }), { status: 404 });
