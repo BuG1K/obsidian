@@ -13,9 +13,16 @@ const GET = async (request: NextRequest) => {
   const orderId = request.nextUrl.searchParams.get("order_id") as string;
   const callType = request.nextUrl.searchParams.get("call_type") as string;
 
-  if (callType === "operator" || !callType) {
+  console.log(callType);
+  if (callType === "operator") {
     return new Response(JSON.stringify({
       error: "call_type error",
+    }), { status: 404 });
+  }
+
+  if (!callType) {
+    return new Response(JSON.stringify({
+      error: "call_type is required",
     }), { status: 404 });
   }
 
