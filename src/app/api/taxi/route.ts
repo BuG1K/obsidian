@@ -1,4 +1,5 @@
 import connectDB from "@/database/db";
+import TaxiLog from "@/database/TaxiLog";
 import TaxiOrder from "@/database/TaxiOrder";
 import TaxiUser from "@/database/TaxiUser";
 import generateShortCode from "@/utils/generateShortCode";
@@ -13,7 +14,16 @@ const GET = async (request: NextRequest) => {
   const orderId = request.nextUrl.searchParams.get("order_id") as string;
   const callType = request.nextUrl.searchParams.get("call_type") as string;
 
-  console.log(callType);
+  await connectDB();
+  const log = await TaxiLog.create({
+    orderId: orderId || "",
+    phone: phone || "",
+    callType: callType || "",
+  });
+
+  // eslint-disable-next-line no-console
+  console.log("TaxiLog created:", log);
+
   if (callType === '"operator"') {
     return new Response(JSON.stringify({
       error: "call_type error",
