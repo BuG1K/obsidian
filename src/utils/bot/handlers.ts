@@ -6,9 +6,9 @@ import { mainMenu, shareContactKeyboard, homeOnly } from "./keyboards";
 import { getUser, setUser } from "./store";
 
 const CONTACTS_STATIC = {
-  phone: "89086660990",
+  phone: "+7 (914) 935-84-04",
   vk: "-",
-  address: "-",
+  address: "ул. Колхозная пл, 40, Черемхово",
 };
 
 async function sendHome(bot: TelegramBot, chatId: number) {
@@ -20,13 +20,24 @@ async function sendHome(bot: TelegramBot, chatId: number) {
 }
 
 async function sendProfile(bot: TelegramBot, chatId: number) {
-  const u = getUser(chatId);
-  const nickname = u.nickname || "-";
-  const bonus = u.bonus ?? 0;
+  await connectDB();
+  const user = await User.findOne({ chatId });
+
+  if (!user) {
+    await bot.sendMessage(
+      chatId,
+      "Профиль не найден. Пожалуйста, зарегистрируйтесь заново командой /start.",
+      { reply_markup: mainMenu },
+    );
+    return;
+  }
+
+  const nickname = user.name || "Не указано";
+  const bonus = user.bonus || 0;
 
   await bot.sendMessage(
     chatId,
-    `👤 Профиль\nНикнейм: ${nickname}\nБонусы: ${bonus}`,
+    `👤 Профиль\n\nНикнейм: ${nickname}\nБонусы: ${bonus}`,
     { reply_markup: mainMenu },
   );
 }
@@ -42,8 +53,14 @@ async function sendPrice(bot: TelegramBot, chatId: number) {
 async function sendContacts(bot: TelegramBot, chatId: number) {
   await bot.sendMessage(
     chatId,
-    `📞 Контакты\nНомер телефона: ${CONTACTS_STATIC.phone}\nГруппа ВК: ${CONTACTS_STATIC.vk}\nАдрес: ${CONTACTS_STATIC.address}`,
-    { reply_markup: mainMenu },
+    `📞 <b>Контакты</b>\n
+    📱 <a href="tel:${CONTACTS_STATIC.phone}">${CONTACTS_STATIC.phone}</a>\n
+    🌐 <a href="${CONTACTS_STATIC.vk}">Группа ВК</a>\n
+    📍 <a href="https://yandex.ru/maps/?text=${encodeURIComponent(CONTACTS_STATIC.address)}">${CONTACTS_STATIC.address}</a>`,
+    {
+      parse_mode: "HTML",
+      reply_markup: mainMenu,
+    },
   );
 }
 
