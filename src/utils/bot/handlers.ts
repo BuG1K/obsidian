@@ -11,6 +11,10 @@ const CONTACTS_STATIC = {
   address: "ул. Колхозная пл, 40, Черемхово",
 };
 
+function escapeMarkdownV2(text: string) {
+  return text.replace(/([_*[\]()~`>#+\-=|{}.!\\<>])/g, "\\$1");
+}
+
 async function sendHome(bot: TelegramBot, chatId: number) {
   await bot.sendMessage(
     chatId,
@@ -51,12 +55,15 @@ async function sendPrice(bot: TelegramBot, chatId: number) {
 }
 
 async function sendContacts(bot: TelegramBot, chatId: number) {
+  const phone = escapeMarkdownV2(CONTACTS_STATIC.phone);
+  const address = escapeMarkdownV2(CONTACTS_STATIC.address);
+
   await bot.sendMessage(
     chatId,
     `📞 *Контакты*\n
-📱 [${CONTACTS_STATIC.phone}](tel:${CONTACTS_STATIC.phone})\n
+📱 [${phone}](tel:${CONTACTS_STATIC.phone})\n
 🌐 [Группа ВК](${CONTACTS_STATIC.vk})\n
-📍 [${CONTACTS_STATIC.address}](https://yandex.ru/maps/?text=${encodeURIComponent(CONTACTS_STATIC.address)})`,
+📍 [${address}](https://yandex.ru/maps/?text=${encodeURIComponent(CONTACTS_STATIC.address)})`,
     {
       parse_mode: "MarkdownV2",
       reply_markup: mainMenu,
