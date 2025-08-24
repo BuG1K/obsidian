@@ -12,7 +12,7 @@ const CONTACTS_STATIC = {
 };
 
 function escapeMarkdownV2(text: string) {
-  return text.replace(/([_*[\]()~`>#+\-=|{}.!\\<>])/g, "\\$1");
+  return text.replace(/([_*$begin:math:display$$end:math:display$()~`>#+\-=|{}.!-])/g, "\\$1");
 }
 
 async function sendHome(bot: TelegramBot, chatId: number) {
