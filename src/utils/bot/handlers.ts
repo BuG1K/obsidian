@@ -53,12 +53,12 @@ async function sendPrice(bot: TelegramBot, chatId: number) {
 async function sendContacts(bot: TelegramBot, chatId: number) {
   await bot.sendMessage(
     chatId,
-    `📞 <b>Контакты</b>\n
-    📱 <a href="tel:${CONTACTS_STATIC.phone}">${CONTACTS_STATIC.phone}</a>\n
-    🌐 <a href="${CONTACTS_STATIC.vk}">Группа ВК</a>\n
-    📍 <a href="https://yandex.ru/maps/?text=${encodeURIComponent(CONTACTS_STATIC.address)}">${CONTACTS_STATIC.address}</a>`,
+    `📞 *Контакты*\n
+📱 [${CONTACTS_STATIC.phone}](tel:${CONTACTS_STATIC.phone})\n
+🌐 [Группа ВК](${CONTACTS_STATIC.vk})\n
+📍 [${CONTACTS_STATIC.address}](https://yandex.ru/maps/?text=${encodeURIComponent(CONTACTS_STATIC.address)})`,
     {
-      parse_mode: "HTML",
+      parse_mode: "MarkdownV2",
       reply_markup: mainMenu,
     },
   );
