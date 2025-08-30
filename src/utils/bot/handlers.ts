@@ -12,7 +12,7 @@ const CONTACTS_STATIC = {
 };
 
 function escapeMarkdownV2(text: string) {
-  return text.replace(/([_*$begin:math:display$$end:math:display$()~`>#+\-=|{}.!-])/g, "\\$1");
+  return text.replace(/([_*\[\]()~`>#+\-=|{}.!\\-])/g, "\\$1");
 }
 
 async function sendHome(bot: TelegramBot, chatId: number) {
@@ -54,21 +54,30 @@ async function sendPrice(bot: TelegramBot, chatId: number) {
   );
 }
 
-async function sendContacts(bot: TelegramBot, chatId: number) {
-  const phone = escapeMarkdownV2(CONTACTS_STATIC.phone);
-  const address = escapeMarkdownV2(CONTACTS_STATIC.address);
+function normalizePhoneForTel(phone: string) {
+  // Оставляем только цифры и плюс — это безопасно для tel: ссылки
+  return phone.replace(/[^+\d]/g, "");
+}
 
-  await bot.sendMessage(
-    chatId,
-    `📞 *Контакты*\n
-📱 [${phone}](tel:${CONTACTS_STATIC.phone})\n
-🌐 [Группа ВК](${CONTACTS_STATIC.vk})\n
-📍 [${address}](https://yandex.ru/maps/?text=${encodeURIComponent(CONTACTS_STATIC.address)})`,
-    {
-      parse_mode: "MarkdownV2",
-      reply_markup: mainMenu,
-    },
-  );
+async function sendContacts(bot: TelegramBot, chatId: number) {
+  const phoneRaw = CONTACTS_STATIC.phone; // например "+7 (999) 123-45-67"
+  const phoneForTel = normalizePhoneForTel(phoneRaw); // "+79991234567"
+  const telUrl = `tel:${phoneForTel}`;
+
+  const vkUrl = CONTACTS_STATIC.vk; // например "https://vk.com/yourgroup"
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACTS_STATIC.address)}`;
+
+  const text = `📞 Контакты\n\n📱 ${phoneRaw}\n🌐 ${vkUrl}\n📍 ${CONTACTS_STATIC.address}`;
+
+  const keyboard = {
+    inline_keyboard: [
+      [{ text: "📱 Позвонить", url: telUrl }],
+      [{ text: "🌐 Открыть группу ВК", url: vkUrl }],
+      [{ text: "📍 Открыть в картах", url: mapsUrl }],
+    ],
+  };
+
+  await bot.sendMessage(chatId, text, { reply_markup: keyboard });
 }
 
 export async function handleStart(bot: TelegramBot, msg: TelegramBot.Message) {
