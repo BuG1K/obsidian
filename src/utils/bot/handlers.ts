@@ -11,9 +11,9 @@ const CONTACTS_STATIC = {
   address: "ул. Колхозная пл, 40, Черемхово",
 };
 
-function escapeMarkdownV2(text: string) {
-  return text.replace(/([_*\[\]()~`>#+\-=|{}.!\\-])/g, "\\$1");
-}
+// function escapeMarkdownV2(text: string) {
+//   return text.replace(/([_*\[\]()~`>#+\-=|{}.!\\-])/g, "\\$1");
+// }
 
 async function sendHome(bot: TelegramBot, chatId: number) {
   await bot.sendMessage(
