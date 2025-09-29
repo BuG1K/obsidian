@@ -193,11 +193,15 @@ export async function handleContact(bot: TelegramBot, msg: TelegramBot.Message) 
   }
 
   await connectDB();
-  const user = await User.create({
-    name,
-    phone,
-    chatId,
-  });
+  let user = await User.findOne({ chatId });
+
+  if (!user) {
+    user = await User.create({
+      name,
+      phone,
+      chatId,
+    });
+  }
 
   // eslint-disable-next-line no-console
   console.log("New user registered:", user);
