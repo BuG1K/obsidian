@@ -3,7 +3,7 @@ import TelegramBot from "node-telegram-bot-api";
 import {
   handleStart, handleContact, hendleUserNickname, handleText,
 } from "@/utils/bot/hendlersb";
-import { users } from "@/utils/bot/store";
+import { users, UserStep } from "@/utils/bot/store";
 
 const token = process.env.TELEGRAM_TOKEN;
 if (!token) {
@@ -31,12 +31,12 @@ export async function POST(request: Request) {
       }
 
       // Контакт (после нажатия кнопки "Поделиться контактом")
-      if (user.step === "await_contact" && msg.contact) {
+      if (user.step === UserStep.AwaitContact && msg.contact) {
         await handleContact(bot, msg);
         return new Response("ok", { status: 200 });
       }
 
-      if (user.step === "await_nickname") {
+      if (user.step === UserStep.AwaitNickname && typeof msg.text === "string") {
         await hendleUserNickname(bot, msg);
         return new Response("ok", { status: 200 });
       }

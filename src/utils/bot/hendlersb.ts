@@ -7,7 +7,7 @@ import { mainMenu } from "./keyboards";
 const handleStart = async (bot: TelegramBot, msg: TelegramBot.Message) => {
   const chatId = msg.chat.id;
 
-  setUser(chatId, { step: "await_contact" });
+  setUser(chatId, { step: UserStep.AwaitContact });
 
   await bot.sendMessage(chatId, "Добро пожаловать! 🚀\n\nДля авторизации поделитесь своим контактом.", {
     reply_markup: {
@@ -34,8 +34,13 @@ const handleContact = async (bot: TelegramBot, msg: TelegramBot.Message) => {
   let user = await User.findOne({ chatId });
 
   if (user) {
-    await bot.sendMessage(chatId, "Вы успешно авторизованы! 🎮");
+    await bot.sendMessage(
+      chatId,
+      "Вы успешно авторизованы! 🎮",
+      { reply_markup: mainMenu },
+    );
     setUser(chatId, { step: null });
+
     return 200;
   }
 
@@ -53,7 +58,7 @@ const handleContact = async (bot: TelegramBot, msg: TelegramBot.Message) => {
     "Пожалуйста, введите ваш никнейм (имя, которое будет видно другим):",
   );
 
-  setUser(chatId, { step: UserStep.AwaitContact });
+  setUser(chatId, { step: UserStep.AwaitNickname });
 
   return 200;
 };
