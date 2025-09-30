@@ -38,6 +38,8 @@ const handleContact = async (bot: TelegramBot, msg: TelegramBot.Message) => {
     return 200;
   }
 
+  console.log(msg.from)
+
   if (!user) {
     user = await User.create({
       name,
