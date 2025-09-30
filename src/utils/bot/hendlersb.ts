@@ -8,7 +8,7 @@ const handleStart = async (bot: TelegramBot, msg: TelegramBot.Message) => {
 
   setUser(chatId, { step: "await_contact" });
 
-  await bot.sendMessage(chatId, "Добро пожаловать! 🚀\n\nДля авторизации поделитесь своим контактом:", {
+  await bot.sendMessage(chatId, "Добро пожаловать! 🚀\n\nДля авторизации поделитесь своим контактом.", {
     reply_markup: {
       keyboard: [
         [{ text: "📱 Поделиться контактом", request_contact: true }],
@@ -33,12 +33,10 @@ const handleContact = async (bot: TelegramBot, msg: TelegramBot.Message) => {
   let user = await User.findOne({ chatId });
 
   if (user) {
-    await bot.sendMessage(chatId, "Вы успешно авторезированы (геймпад)");
+    await bot.sendMessage(chatId, "Вы успешно авторизованы! 🎮");
     setUser(chatId, { step: null });
     return 200;
   }
-
-  console.log(msg.from)
 
   if (!user) {
     user = await User.create({
@@ -80,7 +78,7 @@ const hendleUserNickname = async (bot: TelegramBot, msg: TelegramBot.Message) =>
   if (user.step === "await_nickname") {
     // Сохраняем никнейм в базе
     await User.updateOne({ chatId }, { username: text });
-    await bot.sendMessage(chatId, "Вы успешно зарегистрированы! (геймапд)");
+    await bot.sendMessage(chatId, "Вы успешно зарегистрированы! 🎮");
     setUser(chatId, { step: null });
 
     return 200;
