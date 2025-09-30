@@ -43,7 +43,7 @@ const handleContact = async (bot: TelegramBot, msg: TelegramBot.Message) => {
       name,
       phone,
       chatId,
-      telegram: msg.from?.id,
+      telegram: msg.from?.username,
     });
   }
 
