@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       }
 
       // Контакт (после нажатия кнопки "Поделиться контактом")
-      if (msg.contact) {
+      if (user.step === "await_contact" && msg.contact) {
         await handleContact(bot, msg);
         return new Response("ok", { status: 200 });
       }
