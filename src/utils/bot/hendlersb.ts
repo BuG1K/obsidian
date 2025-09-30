@@ -1,7 +1,7 @@
 import TelegramBot from "node-telegram-bot-api";
 import connectDB from "@/database/db";
 import User from "@/database/User";
-import { setUser } from "./store";
+import { setUser, users } from "./store";
 
 const handleStart = async (bot: TelegramBot, msg: TelegramBot.Message) => {
   const chatId = msg.chat.id;
@@ -60,24 +60,25 @@ const handleContact = async (bot: TelegramBot, msg: TelegramBot.Message) => {
 const hendleUserNickname = async (bot: TelegramBot, msg: TelegramBot.Message) => {
   const chatId = msg.chat.id;
   const text = msg.text?.trim();
-  console.log("Received nickname:", text);
+
   if (!text) {
     await bot.sendMessage(chatId, "Пожалуйста, введите корректный никнейм:");
     return 500;
   }
 
   await connectDB();
-  const user = await User.findOne({ chatId });
-  console.log("Fetched user from DB:", user);
-  if (!user) {
+  const userDb = await User.findOne({ chatId });
+
+  if (!userDb) {
     await bot.sendMessage(chatId, "Ошибка: пользователь не найден. Пожалуйста, начните заново с /start.");
     setUser(chatId, { step: null });
     return 500;
   }
 
+  const user = users.get(chatId);
+
   if (user.step === "await_nickname") {
     // Сохраняем никнейм в базе
-    console.log("Setting username:", text);
     await User.updateOne({ chatId }, { username: text });
     await bot.sendMessage(chatId, "Вы успешно зарегистрированы! 🎮");
     setUser(chatId, { step: null });
