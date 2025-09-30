@@ -5,6 +5,9 @@ const UserSchema = new mongoose.Schema({
   phone: { type: String, required: true, unique: true },
   chatId: { type: Number, required: true },
   points: { type: Number, required: false, default: 0 },
+  username: { type: String, required: false },
+  telegram: { type: Number, required: false },
+  lvl: { type: Number, required: false, default: 1 },
 }, { timestamps: true });
 
 const User = mongoose.models.User || mongoose.model("User", UserSchema);

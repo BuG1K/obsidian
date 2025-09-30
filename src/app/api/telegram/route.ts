@@ -1,6 +1,7 @@
 // pages/api/telegram.js
 import TelegramBot from "node-telegram-bot-api";
-import { handleStart, handleText, handleContact } from "@/utils/bot/handlers";
+import { handleStart, handleContact, hendleUserNickname } from "@/utils/bot/hendlersb";
+import { users } from "@/utils/bot/store";
 
 const token = process.env.TELEGRAM_TOKEN;
 if (!token) {
@@ -17,6 +18,7 @@ export async function POST(request: Request) {
     // Логи будут видны в Vercel → Deployments → Functions → /api/telegram
     // eslint-disable-next-line no-console
     console.log("Telegram update:", JSON.stringify(update));
+    const user = users.get(update.message?.chat.id || 0) || { step: null };
 
     const msg = update.message || update.edited_message || null;
     if (msg) {
@@ -32,9 +34,14 @@ export async function POST(request: Request) {
         return new Response("ok", { status: 200 });
       }
 
+      if (user.step === "await_nickname") {
+        await hendleUserNickname(bot, msg);
+        return new Response("ok", { status: 200 });
+      }
+
       // Обычный текст/кнопки
       if (typeof msg.text === "string") {
-        await handleText(bot, msg);
+        // await handleText(bot, msg);
         return new Response("ok", { status: 200 });
       }
     }
