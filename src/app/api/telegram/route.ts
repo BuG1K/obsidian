@@ -35,7 +35,6 @@ export async function POST(request: Request) {
       }
 
       if (user.step === "await_nickname") {
-        console.log("User nickname:", msg.text);
         await hendleUserNickname(bot, msg);
         return new Response("ok", { status: 200 });
       }

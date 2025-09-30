@@ -1,7 +1,8 @@
 import TelegramBot from "node-telegram-bot-api";
 import connectDB from "@/database/db";
 import User from "@/database/User";
-import { setUser, users } from "./store";
+import { setUser, users, UserStep } from "./store";
+import { mainMenu } from "./keyboards";
 
 const handleStart = async (bot: TelegramBot, msg: TelegramBot.Message) => {
   const chatId = msg.chat.id;
@@ -52,7 +53,7 @@ const handleContact = async (bot: TelegramBot, msg: TelegramBot.Message) => {
     "Пожалуйста, введите ваш никнейм (имя, которое будет видно другим):",
   );
 
-  setUser(chatId, { step: "await_nickname" });
+  setUser(chatId, { step: UserStep.AwaitContact });
 
   return 200;
 };
@@ -78,7 +79,6 @@ const hendleUserNickname = async (bot: TelegramBot, msg: TelegramBot.Message) =>
   const user = users.get(chatId);
 
   if (user.step === "await_nickname") {
-    // Сохраняем никнейм в базе
     await User.updateOne({ chatId }, { username: text });
     await bot.sendMessage(chatId, "Вы успешно зарегистрированы! 🎮");
     setUser(chatId, { step: null });
@@ -86,8 +86,44 @@ const hendleUserNickname = async (bot: TelegramBot, msg: TelegramBot.Message) =>
     return 200;
   }
 
-  await bot.sendMessage(chatId, "Никнейм можно установить только один раз. Если вы хотите его изменить, обратитесь в поддержку.");
+  await bot.sendMessage(
+    chatId,
+    "Никнейм можно установить только один раз. Если вы хотите его изменить, обратитесь в поддержку.",
+    { reply_markup: mainMenu },
+  );
+
   return 400;
+};
+
+const hendleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
+  const chatId = msg.chat.id;
+  const text = msg.text?.trim() || "";
+
+  if (text === "👤 Профиль") {
+    await connectDB();
+    const userDb = await User.findOne({ chatId });
+
+    if (!userDb) {
+      await bot.sendMessage(chatId, "Ошибка: пользователь не найден. Пожалуйста, начните заново с /start.");
+
+      return 500;
+    }
+
+    const profile = `
+      👤 Профиль:
+      Имя: ${userDb.name}
+      Никнейм: ${userDb.username || "не установлен"}
+      Уровень: ${userDb.lvl}
+      Баллы: ${userDb.points}
+      Баланс: ${userDb.balance} руб.
+    `;
+
+    await bot.sendMessage(chatId, profile, { reply_markup: mainMenu });
+
+    return 200;
+  }
+
+  await bot.sendMessage(chatId, "Неизвестная команда. Пожалуйста, используйте меню ниже.", { reply_markup: mainMenu });
 };
 
 export { handleStart, handleContact, hendleUserNickname };

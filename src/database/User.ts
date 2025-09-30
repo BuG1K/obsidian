@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema({
   username: { type: String, required: false },
   telegram: { type: String, required: false },
   lvl: { type: Number, required: false, default: 1 },
+  balance: { type: Number, required: false, default: 0 },
 }, { timestamps: true });
 
 const User = mongoose.models.User || mongoose.model("User", UserSchema);
