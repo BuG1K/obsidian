@@ -60,7 +60,7 @@ const handleContact = async (bot: TelegramBot, msg: TelegramBot.Message) => {
 const hendleUserNickname = async (bot: TelegramBot, msg: TelegramBot.Message) => {
   const chatId = msg.chat.id;
   const text = msg.text?.trim();
-
+  console.log("Received nickname:", text);
   if (!text) {
     await bot.sendMessage(chatId, "Пожалуйста, введите корректный никнейм:");
     return 500;
@@ -68,7 +68,7 @@ const hendleUserNickname = async (bot: TelegramBot, msg: TelegramBot.Message) =>
 
   await connectDB();
   const user = await User.findOne({ chatId });
-
+  console.log("Fetched user from DB:", user);
   if (!user) {
     await bot.sendMessage(chatId, "Ошибка: пользователь не найден. Пожалуйста, начните заново с /start.");
     setUser(chatId, { step: null });
@@ -77,6 +77,7 @@ const hendleUserNickname = async (bot: TelegramBot, msg: TelegramBot.Message) =>
 
   if (user.step === "await_nickname") {
     // Сохраняем никнейм в базе
+    console.log("Setting username:", text);
     await User.updateOne({ chatId }, { username: text });
     await bot.sendMessage(chatId, "Вы успешно зарегистрированы! 🎮");
     setUser(chatId, { step: null });
