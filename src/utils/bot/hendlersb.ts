@@ -32,6 +32,10 @@ const handleContact = async (bot: TelegramBot, msg: TelegramBot.Message) => {
   await connectDB();
   let user = await User.findOne({ chatId });
 
+  if (user) {
+    await bot.sendMessage(chatId, "Вы уже зарегистрированы! 🎉");
+  }
+
   if (!user) {
     user = await User.create({
       name,
@@ -40,8 +44,6 @@ const handleContact = async (bot: TelegramBot, msg: TelegramBot.Message) => {
       telegram: msg.from?.id,
     });
   }
-
-  console.log(user);
 
   await bot.sendMessage(
     chatId,
