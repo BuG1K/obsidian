@@ -1,6 +1,8 @@
 // pages/api/telegram.js
 import TelegramBot from "node-telegram-bot-api";
-import { handleStart, handleContact, hendleUserNickname } from "@/utils/bot/hendlersb";
+import {
+  handleStart, handleContact, hendleUserNickname, handleText,
+} from "@/utils/bot/hendlersb";
 import { users } from "@/utils/bot/store";
 
 const token = process.env.TELEGRAM_TOKEN;
@@ -41,7 +43,7 @@ export async function POST(request: Request) {
 
       // Обычный текст/кнопки
       if (typeof msg.text === "string") {
-        // await handleText(bot, msg);
+        await handleText(bot, msg);
         return new Response("ok", { status: 200 });
       }
     }

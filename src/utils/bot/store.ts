@@ -25,4 +25,6 @@ const setUser = (chatId: number, patch: object) => {
   return next;
 };
 
-export { UserStep, users, getUser, setUser };
+export {
+  UserStep, users, getUser, setUser,
+};

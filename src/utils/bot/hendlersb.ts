@@ -95,7 +95,7 @@ const hendleUserNickname = async (bot: TelegramBot, msg: TelegramBot.Message) =>
   return 400;
 };
 
-const hendleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
+const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
   const chatId = msg.chat.id;
   const text = msg.text?.trim() || "";
 
@@ -124,6 +124,10 @@ const hendleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
   }
 
   await bot.sendMessage(chatId, "Неизвестная команда. Пожалуйста, используйте меню ниже.", { reply_markup: mainMenu });
+
+  return 400;
 };
 
-export { handleStart, handleContact, hendleUserNickname };
+export {
+  handleStart, handleContact, hendleUserNickname, handleText,
+};
