@@ -138,6 +138,7 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
       Телефон: [8 (914) 935-84-04](tel:+79149358404)
       Telegram: 3423dfsdf
       VK: vk.com/username
+
       Адрес: г. Москва, ул. Примерная, д. 1
 
 
@@ -148,7 +149,7 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
       contactInfo,
       {
         reply_markup: mainMenu,
-        parse_mode: "HTML",
+        parse_mode: "MarkdownV2",
       },
     );
 
