@@ -142,7 +142,10 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
     await bot.sendMessage(
       chatId,
       contactInfo,
-      { reply_markup: mainMenu },
+      {
+        reply_markup: mainMenu,
+        parse_mode: "HTML",
+      },
     );
 
     return 200;
