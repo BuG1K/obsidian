@@ -85,7 +85,11 @@ const hendleUserNickname = async (bot: TelegramBot, msg: TelegramBot.Message) =>
 
   if (user.step === "await_nickname") {
     await User.updateOne({ chatId }, { username: text });
-    await bot.sendMessage(chatId, "Вы успешно зарегистрированы! 🎮");
+    await bot.sendMessage(
+      chatId,
+      "Вы успешно зарегистрированы! 🎮",
+      { reply_markup: mainMenu },
+    );
     setUser(chatId, { step: null });
 
     return 200;
@@ -115,7 +119,7 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
     }
 
     const profile = `
-      👤 Профиль:
+    👤 Профиль:
       Имя: ${userDb.name}
       Никнейм: ${userDb.username || "не установлен"}
       Уровень: ${userDb.lvl}
@@ -124,6 +128,22 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
     `;
 
     await bot.sendMessage(chatId, profile, { reply_markup: mainMenu });
+
+    return 200;
+  }
+
+  if (text === "📞 Контакты") {
+    const contactInfo = `
+    📞 Контакты:
+      Телефон: <a href="tel:+79149358404">8 (914) 935-84-04</a>
+      Email:
+    `;
+
+    await bot.sendMessage(
+      chatId,
+      contactInfo,
+      { reply_markup: mainMenu },
+    );
 
     return 200;
   }
