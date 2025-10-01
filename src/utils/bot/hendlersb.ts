@@ -154,7 +154,7 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
         parse_mode: "HTML",
       },
     );
-    await bot.sendLocation(chatId, 53.15441, 103.0599078);
+    await bot.sendLocation(chatId, 53.1545307, 103.0617622);
 
     return 200;
   }
