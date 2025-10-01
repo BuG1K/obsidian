@@ -190,7 +190,7 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
     await bot.sendMessage(
       chatId,
       contactInfo,
-      { reply_markup: mainMenu },
+      { reply_markup: mainMenu, disable_web_page_preview: true },
     );
 
     await bot.sendLocation(chatId, 53.15457514877932, 103.06222622653196, {
