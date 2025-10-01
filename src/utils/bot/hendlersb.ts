@@ -154,7 +154,7 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
       },
     );
 
-    await bot.sendLocation(chatId, 53.154535, 103.0592151, {
+    await bot.sendLocation(chatId, 53.15457514877932, 103.06222622653196, {
       reply_markup: {
         inline_keyboard: [[
           { text: "Открыть в Google Maps", url: "https://www.google.com/maps/place/SX+Game+Club+(%D0%9A%D0%BE%D0%BC%D0%BF%D1%8C%D1%8E%D1%82%D0%B5%D1%80%D0%BD%D1%8B%D0%B9+%D0%BA%D0%BB%D1%83%D0%B1)/@53.154535,103.0592151,17z/data=!4m12!1m5!3m4!2zNTPCsDA5JzE2LjMiTiAxMDPCsDAzJzQyLjQiRQ!8m2!3d53.154535!4d103.06179!3m5!1s0x5d06c72f33bd725d:0xbb899ba882d848d7!8m2!3d53.15441!4d103.0624827!16s%2Fg%2F11vscxnxjc?entry=ttu&g_ep=EgoyMDI1MDkyOC4wIKXMDSoASAFQAw%3D%3D" },
