@@ -136,11 +136,13 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
   if (text === "📞 Контакты") {
     const contactInfo = `
     📞 Контакты:
-      Телефон: <a href="tel:+79149358404">8 (914) 935-84-04</a>
+      Телефон: +7 (914) 935-84-04
       Telegram: https://t.me/sxgclub
       VK: https://vk.com/sxgameclub
 
-      Режим работы: 10:00–23:00 | 23:00–06:00 (по брони, 18+)
+      Режим работы:
+        10:00 – 23:00
+        23:00 – 06:00 (по брони, 18+)
       Адрес: пл. Колхозная, 40 (Центральный рынок)
     `;
 
@@ -152,7 +154,7 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
         parse_mode: "HTML",
       },
     );
-    await bot.sendLocation(chatId, 55.7558, 37.6173);
+    await bot.sendLocation(chatId, 53.15441, 103.0599078);
 
     return 200;
   }
