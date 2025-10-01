@@ -3,7 +3,7 @@ import TelegramBot from "node-telegram-bot-api";
 import {
   handleStart, handleContact, hendleUserNickname, handleText,
   handleReview,
-} from "@/utils/bot/hendlersb";
+} from "@/utils/bot/hendlers";
 import { users, UserStep } from "@/utils/bot/store";
 
 const token = process.env.TELEGRAM_TOKEN;
