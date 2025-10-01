@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-escape */
 import TelegramBot from "node-telegram-bot-api";
 import connectDB from "@/database/db";
 import User from "@/database/User";
@@ -157,6 +156,14 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
     await bot.sendLocation(chatId, 53.1545307, 103.0617622);
 
     return 200;
+  }
+
+  if (text === "💵 Цены") {
+    await bot.sendPhoto(
+      chatId,
+      "https://t.me/sxgclub/7",
+      { caption: "💵 Цены" },
+    );
   }
 
   await bot.sendMessage(chatId, "Неизвестная команда. Пожалуйста, используйте меню ниже.", { reply_markup: mainMenu });
