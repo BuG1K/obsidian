@@ -1,6 +1,7 @@
 import TelegramBot from "node-telegram-bot-api";
 import connectDB from "@/database/db";
 import User from "@/database/User";
+import Review from "@/database/Review";
 import { setUser, users, UserStep } from "./store";
 import { mainMenu } from "./keyboards";
 
@@ -104,9 +105,50 @@ const hendleUserNickname = async (bot: TelegramBot, msg: TelegramBot.Message) =>
   return 400;
 };
 
+const handleReview = async (bot: TelegramBot, msg: TelegramBot.Message) => {
+  const chatId = msg.chat.id;
+  const text = msg.text?.trim() || "";
+  const user = users.get(chatId) || { step: null };
+
+  if (user.step === UserStep.AwaitReview) {
+    await connectDB();
+    const userDb = await User.findOne({ chatId });
+
+    if (!user && !userDb) {
+      await bot.sendMessage(chatId, "Ошибка: пользователь не найден. Пожалуйста, начните заново с /start.");
+
+      return 500;
+    }
+
+    const rewiew = await Review.create({
+      name: userDb.name,
+      phone: userDb.phone,
+      message: text,
+    });
+
+    if (!rewiew) {
+      await bot.sendMessage(chatId, "Ошибка при сохранении отзыва. Пожалуйста, попробуйте ещё раз.");
+
+      return 500;
+    }
+
+    user.step = null;
+    users.set(chatId, user);
+
+    await bot.sendMessage(
+      chatId,
+      "Спасибо за ваш отзыв! 🎉",
+      { reply_markup: mainMenu },
+    );
+  }
+
+  return 200;
+};
+
 const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
   const chatId = msg.chat.id;
   const text = msg.text?.trim() || "";
+  const user = users.get(chatId) || { step: null };
 
   if (text === "👤 Профиль") {
     await connectDB();
@@ -150,10 +192,7 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
     await bot.sendMessage(
       chatId,
       contactInfo,
-      {
-        reply_markup: mainMenu,
-        parse_mode: "HTML",
-      },
+      { reply_markup: mainMenu },
     );
 
     await bot.sendLocation(chatId, 53.15457514877932, 103.06222622653196, {
@@ -177,11 +216,37 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
     return 200;
   }
 
+  if (text === "💬 Обратная связь") {
+    const message = `
+    💬 Обратная связь
+      Ваше мнение важно для нас!
+      Здесь вы можете оставить отзыв, поделиться предложениями или сообщить о проблеме.
+      Мы внимательно читаем каждое сообщение.
+    `;
+
+    await bot.sendMessage(
+      chatId,
+      message,
+      { reply_markup: mainMenu },
+    );
+
+    if (user) {
+      user.step = UserStep.AwaitReview;
+      users.set(chatId, user);
+
+      return 200;
+    }
+
+    await bot.sendMessage(chatId, "Ошибка: пользователь не найден. Пожалуйста, начните заново с /start.");
+
+    return 500;
+  }
+
   await bot.sendMessage(chatId, "Неизвестная команда. Пожалуйста, используйте меню ниже.", { reply_markup: mainMenu });
 
   return 400;
 };
 
 export {
-  handleStart, handleContact, hendleUserNickname, handleText,
+  handleStart, handleContact, hendleUserNickname, handleText, handleReview,
 };

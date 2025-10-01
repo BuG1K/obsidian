@@ -2,11 +2,8 @@ import { KeyboardButton, ReplyKeyboardMarkup } from "node-telegram-bot-api";
 
 const mainMenu: ReplyKeyboardMarkup = {
   keyboard: [
-    [{ text: "👤 Профиль" }, { text: "📞 Контакты" }],
-    [{ text: "💵 Цены" }],
-    // [{ text: "📞 Контакты" }],
-    // [{ text: "💬 Отзывы" }, { text: "🎁 Акции" }],
-    // [{ text: "💵 Цены" }, { text: "🏠 Главная" }],
+    [{ text: "👤 Профиль" }, { text: "📞 Контакты" }, { text: "💵 Цены" }],
+    [{ text: "💬 Обратная связь" }],
   ] as KeyboardButton[][],
   resize_keyboard: true,
 };

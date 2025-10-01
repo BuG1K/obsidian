@@ -2,6 +2,7 @@
 import TelegramBot from "node-telegram-bot-api";
 import {
   handleStart, handleContact, hendleUserNickname, handleText,
+  handleReview,
 } from "@/utils/bot/hendlersb";
 import { users, UserStep } from "@/utils/bot/store";
 
@@ -38,6 +39,11 @@ export async function POST(request: Request) {
 
       if (user.step === UserStep.AwaitNickname) {
         await hendleUserNickname(bot, msg);
+        return new Response("ok", { status: 200 });
+      }
+
+      if (user.step === UserStep.AwaitReview) {
+        await handleReview(bot, msg);
         return new Response("ok", { status: 200 });
       }
 

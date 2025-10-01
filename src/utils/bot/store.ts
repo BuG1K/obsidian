@@ -1,6 +1,7 @@
 enum UserStep {
   AwaitNickname = "await_nickname",
   AwaitContact = "await_contact",
+  AwaitReview = "await_review",
 }
 
 const users = new Map();
