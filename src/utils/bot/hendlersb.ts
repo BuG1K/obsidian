@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import TelegramBot from "node-telegram-bot-api";
 import connectDB from "@/database/db";
 import User from "@/database/User";
@@ -135,11 +136,13 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
   if (text === "📞 Контакты") {
     const contactInfo = `
     📞 Контакты:
-      Телефон: [8 (914) 935-84-04](tel:+79149358404)
+      Телефон: [8 \$begin:math:text$914\\$end:math:text$ 935-84-04](tel:+79149358404) 
       Telegram: 3423dfsdf
       VK: vk.com/username
 
-      Адрес: г. Москва, ул. Примерная, д. 1
+      Режим работы: 10:00–23:00 | 23:00–06:00 (по брони, 18+)
+
+      Адрес: пл. Колхозная, 40 (Центральный рынок)
 
 
     `;
@@ -152,6 +155,7 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
         parse_mode: "MarkdownV2",
       },
     );
+    await bot.sendLocation(chatId, 55.7558, 37.6173);
 
     return 200;
   }
