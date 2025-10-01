@@ -153,7 +153,14 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
         parse_mode: "HTML",
       },
     );
-    await bot.sendLocation(chatId, 53.1545307, 103.0617622);
+
+    await bot.sendLocation(chatId, 53.154535, 103.0592151, {
+      reply_markup: {
+        inline_keyboard: [[
+          { text: "Открыть в Google Maps", url: "https://www.google.com/maps/place/SX+Game+Club/..." }
+        ]]
+      }
+    });
 
     return 200;
   }
