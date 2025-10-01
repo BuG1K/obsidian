@@ -169,7 +169,7 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
     await bot.sendPhoto(
       chatId,
       "https://t.me/sxgclub/7",
-      { caption: "💵 Цены" },
+      { reply_markup: mainMenu },
     );
   }
 
