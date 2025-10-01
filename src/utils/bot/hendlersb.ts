@@ -171,6 +171,8 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
       "https://t.me/sxgclub/7",
       { reply_markup: mainMenu },
     );
+
+    return 200;
   }
 
   await bot.sendMessage(chatId, "Неизвестная команда. Пожалуйста, используйте меню ниже.", { reply_markup: mainMenu });
