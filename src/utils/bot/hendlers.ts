@@ -4,6 +4,7 @@ import User from "@/database/User";
 import Review from "@/database/Review";
 import { setUser, users, UserStep } from "./store";
 import { mainMenu } from "./keyboards";
+import { sendErrorMessage, sendWarningMessage } from "./messages";
 
 const handleStart = async (bot: TelegramBot, msg: TelegramBot.Message) => {
   const chatId = msg.chat.id;
@@ -236,14 +237,10 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
       return 200;
     }
 
-    await bot.sendMessage(chatId, "Ошибка: пользователь не найден. Пожалуйста, начните заново с /start.");
-
-    return 500;
+    return sendErrorMessage(bot, chatId);
   }
 
-  await bot.sendMessage(chatId, "Неизвестная команда. Пожалуйста, используйте меню ниже.", { reply_markup: mainMenu });
-
-  return 400;
+  return sendWarningMessage(bot, chatId);
 };
 
 export {
