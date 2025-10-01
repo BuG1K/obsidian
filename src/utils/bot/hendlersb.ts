@@ -136,7 +136,7 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
   if (text === "📞 Контакты") {
     const contactInfo = `
     📞 Контакты:
-      Телефон: [8 \$begin:math:text$914\\$end:math:text$ 935-84-04](tel:+79149358404) 
+      Телефон: <a href="tel:+79149358404">8 (914) 935-84-04</a><br>
       Telegram: 3423dfsdf
       VK: vk.com/username
 
@@ -152,7 +152,7 @@ const handleText = async (bot: TelegramBot, msg: TelegramBot.Message) => {
       contactInfo,
       {
         reply_markup: mainMenu,
-        parse_mode: "MarkdownV2",
+        parse_mode: "HTML",
       },
     );
     await bot.sendLocation(chatId, 55.7558, 37.6173);
